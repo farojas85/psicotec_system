@@ -17,8 +17,17 @@ var app = new Vue({
             descripcion:'',
             estado:''
         },
+        areas:{},
+        total_areas:'',
+        area:{
+            id:'',
+            nombre:'',
+            siglas:'',
+            estado:''
+        },
         showdeletes:false,
         showdeletes_estilo:false,
+        showdeletes_area:false,
         errores:[],
         offset:4
     },
@@ -59,6 +68,28 @@ var app = new Vue({
             var to = from + (this.offset * 2);
             if (to >= this.estiloAprendizajes.last_page) {
                 to = this.estiloAprendizajes.last_page;
+            }
+            var pagesArray = [];
+            while (from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
+        },
+        isActivedArea() {
+            return this.areas.current_page;
+        },
+        pagesNumberArea() {
+            if (!this.areas.to) {
+                return [];
+            }
+            var from = this.areas.current_page - this.offset;
+            if (from < 1) {
+                from = 1;
+            }
+            var to = from + (this.offset * 2);
+            if (to >= this.areas.last_page) {
+                to = this.areas.last_page;
             }
             var pagesArray = [];
             while (from <= to) {
@@ -109,6 +140,12 @@ var app = new Vue({
                     this.estilo_aprendizaje.nombre=''
                     this.estilo_aprendizaje.descripcion=''
                     this.estilo_aprendizaje.estado=''
+                    break
+                case 'area':
+                    this.area.id=''
+                    this.area.siglas=''
+                    this.area.nombre=''
+                    this.area.estado=''
                     break
             }
         },
@@ -469,13 +506,206 @@ var app = new Vue({
                     `Ocurrió un Error: ${error.response.status}`
                 )
             })
-        }
-
+        },
+        listarAreas() {
+            axios.get('/area/lista').then(({ data }) => (
+                this.areas = data,
+                this.total_areas = this.areas.total
+             ))
+        },
+        getResultsAreas(page=1) {   
+            if(this.showdeletes_area == false) {
+                axios.get('/area/lista?page=' + page)
+                .then(response => {
+                    this.areas = response.data
+                    this.total_areas = this.areas.total
+                }); 
+            }
+            else {
+                axios.get('/area/mostrarEliminados?page=' + page)
+                .then(response => {
+                    this.areas = response.data
+                    this.total_areas = this.areas.total
+                });
+            }
+        },
+        changePageAreas(page) {
+            this.areas.current_page = page
+            this.getResultsAreas(page)
+        },
+        nuevaArea()
+        {
+            this.limpiar('area')
+            $('#area-create').modal('show')
+        },
+        guardarArea() {
+            axios.post('/area/guardar',this.area)
+                .then((response) => (
+                    swal.fire({
+                        type : 'success',
+                        title : 'Áreas',
+                        text : response.data.mensaje,
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor:"#1abc9c",
+                    }).then(respuesta => {
+                        if(respuesta.value) {
+                            $('#area-create').modal('hide'),
+                            this.listarAreas(),
+                            this.getResultsAreas()
+                        }
+                    })
+                ))
+                .catch((errors) => {
+                    if(response = errors.response) {
+                        this.errores = response.data.errors,
+                        console.clear()
+                    }
+                })
+        },
+        mostrarArea(id) {
+            this.limpiar('area')
+            axios.get('/area/mostrar',{params:{id:id}})
+            .then((response) => {
+                let men = response.data
+                this.area.id =  men.id
+                this.area.nombre = men.nombre
+                this.area.siglas = men.siglas
+                this.area.estado = men.estado
+                $('#area-show').modal('show')
+            })
+        },
+        editarArea(id) {
+            this.limpiar('area')
+            axios.get('/area/mostrar',{params:{id:id}})
+            .then((response) => {
+                let men = response.data
+                this.area.id =  men.id
+                this.area.nombre = men.nombre
+                this.area.siglas = men.siglas
+                this.area.estado = men.estado
+                $('#area-edit').modal('show')
+            })
+        },
+        actualizarArea() {
+            axios.put('/area/actualizar',this.area)
+                .then((response) => (
+                    swal.fire({
+                        type : 'success',
+                        title : 'Áreas',
+                        text : response.data.mensaje,
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor:"#1abc9c",
+                    }).then(respuesta => {
+                        if(respuesta.value) {
+                            this.listarAreas(),
+                            this.getResultsAreas()
+                            $('#area-edit').modal('hide')
+                        }
+                    })
+                ))
+                .catch((errors) => {
+                    if(response = errors.response) {
+                        this.errores = response.data.errors
+                        //console.clear()
+                    }
+                })
+        },
+        eliminarArea(id) {
+            swal.fire({
+                title:"¿Está Seguro de Eliminar?",
+                text:'Puede Restaurarlo Luego, si lo desea',
+                type:"question",
+                showCancelButton: true,
+                confirmButtonText:"Si",
+                confirmButtonColor:"#38c172",
+                cancelButtonText:"No",
+                cancelButtonColor:"#e3342f"
+            }).then( response => {
+                if(response.value){
+                    axios.post('/area/eliminar',{id:id})
+                    .then((response) => (
+                        swal.fire({
+                            type : 'success',
+                            title : 'Áreas',
+                            text : response.data.mensaje,
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor:"#1abc9c",
+                        }).then(respuesta => {
+                            if(respuesta.value) {
+                                this.listarAreas(),
+                                this.getResultsAreas()
+                            }
+                        })
+                    ))
+                    .catch((errors) => {
+                        if(response = errors.response) {
+                            this.errores = response.data.errors
+                        }
+                    })
+                }
+            }).catch(error => {
+                this.$Progress.fail()
+                swal.showValidationError(
+                    `Ocurrió un Error: ${error.response.status}`
+                )
+            })
+        },
+        mostrarEliminadosArea() {
+            this.showdeletes_area = true
+            axios.get('/area/mostrarEliminados').then(({ data }) => (
+                this.areas = data,
+                this.total_areas = this.areas.total
+            ))
+            this.getResultsAreas()
+        },
+        restaurarArea(id) {
+            swal.fire({
+                title:"¿Está Seguro de Restaurar el Registro?",
+                text:'Puede Eliminarlo Cuando desee',
+                type:"question",
+                showCancelButton: true,
+                confirmButtonText:"Si",
+                confirmButtonColor:"#38c172",
+                cancelButtonText:"No",
+                cancelButtonColor:"#e3342f"
+            }).then( response => {
+                if(response.value){
+                    axios.post('/area/restaurar',{id:id})
+                    .then((response) => (
+                        swal.fire({
+                            type : 'success',
+                            title : 'Áreas',
+                            text : response.data.mensaje,
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor:"#1abc9c",
+                        }).then(respuesta => {
+                            if(respuesta.value) {
+                                this.showdeletes_area = false;
+                                this.listarAreas(),
+                                this.getResultsAreas()
+                            }
+                        })
+                    ))
+                    .catch((errors) => {
+                        if(response = errors.response) {
+                            this.errores = response.data.errors
+                        }
+                    })
+                }
+            }).catch(error => {
+                this.$Progress.fail()
+                swal.showValidationError(
+                    `Ocurrió un Error: ${error.response.status}`
+                )
+            })
+        },
     },
     created() {
         this.listarHabilidades()
         this.getResultsHabilidades()
         this.listarEstilos()
         this.getResultsEstilos()
+        this.listarAreas()
+        this.getResultsAreas()
     }
 })

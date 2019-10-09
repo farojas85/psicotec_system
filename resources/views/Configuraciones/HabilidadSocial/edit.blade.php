@@ -25,9 +25,9 @@
                 <div class="form-group row">
                     <div class="col-12">
                         <div class="checkbox checkbox-success mb-2">
-                            <input id="estado" type="checkbox" v-model="habilidad_social.estado">
-                            <label for="estado" v-if="habilidad_social.estado == 1">Activo</label>
-                            <label for="estado" v-else>Inactivo</label>
+                            <input id="habilidad-estado-edit" type="checkbox" v-model="habilidad_social.estado">
+                            <label for="habilidad-estado-edit" v-if="habilidad_social.estado == 1">Activo</label>
+                            <label for="habilidad-estado-edit" v-else>Inactivo</label>
                         </div>
                     </div>
                 </div>
@@ -40,6 +40,6 @@
                     <i class="fa fa-save"></i> Actualizar
                 </button>
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+    </div>
+</div>

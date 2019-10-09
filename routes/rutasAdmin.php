@@ -80,3 +80,14 @@ Route::group(['prefix' => 'estilo-aprendizaje', 'middleware' => 'auth'], functio
     Route::get('mostrarEliminados', 'EstiloAprendizajeController@showdeletes')->name('estiloaprendizaje.showdeletes');
     Route::post('restaurar','EstiloAprendizajeController@restoredelete')->name('estiloaprendizaje.restoredelete');
 });
+
+Route::group(['prefix' => 'area', 'middleware' => 'auth'], function(){
+    Route::get('/', 'AreaController@index')->name('area.index');
+    Route::get('lista', 'AreaController@lista')->name('area.lista');
+    Route::post('guardar','AreaController@store')->name('area.store');
+    Route::get('mostrar', 'AreaController@show')->name('area.show');
+    Route::put('actualizar','AreaController@update')->name('area.update');
+    Route::post('eliminar','AreaController@destroy')->name('area.destroy');
+    Route::get('mostrarEliminados', 'AreaController@showdeletes')->name('area.showdeletes');
+    Route::post('restaurar','AreaController@restoredelete')->name('area.restoredelete');
+});

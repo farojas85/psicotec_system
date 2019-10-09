@@ -25,9 +25,9 @@
                 <div class="form-group row">
                     <div class="col-12">
                         <div class="checkbox checkbox-success mb-2">
-                            <input id="estado" type="checkbox" v-model="estilo_aprendizaje.estado">
-                            <label for="estado" v-if="estilo_aprendizaje.estado == 1">Activo</label>
-                            <label for="estado" v-else>Inactivo</label>
+                            <input id="estilo-estado-edit" type="checkbox" v-model="estilo_aprendizaje.estado">
+                            <label for="estilo-estado-edit" v-if="estilo_aprendizaje.estado == 1">Activo</label>
+                            <label for="estilo-estado-edit" v-else>Inactivo</label>
                         </div>
                     </div>
                 </div>
