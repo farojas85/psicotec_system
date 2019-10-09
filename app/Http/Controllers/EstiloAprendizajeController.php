@@ -32,59 +32,69 @@ class EstiloAprendizajeController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nombre' => 'required|string|max:191|unique:estilo_aprendizajes,nombre'
+        ]);
+
+        $request->descripcion = str_replace(".",".\n",$request->descripcion);
+
+        $estilo = EstiloAprendizaje::create([
+            'nombre' => $request->nombre,
+            'descripcion' => $request->descripcion
+        ]);
+
+        return response()->json(['mensaje' => 'Registro Insertado Satisfactoriamente']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\EstiloAprendizaje  $estiloAprendizaje
-     * @return \Illuminate\Http\Response
-     */
-    public function show(EstiloAprendizaje $estiloAprendizaje)
+    public function show(Request $request)
     {
-        //
+        return EstiloAprendizaje::findOrFail($request->id);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\EstiloAprendizaje  $estiloAprendizaje
-     * @return \Illuminate\Http\Response
-     */
     public function edit(EstiloAprendizaje $estiloAprendizaje)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\EstiloAprendizaje  $estiloAprendizaje
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, EstiloAprendizaje $estiloAprendizaje)
+    public function update(Request $request)
     {
-        //
+        $estilo = EstiloAprendizaje::findOrfail($request->id);
+
+        $estilo->nombre = $request->nombre;
+        $estilo->descripcion = $request->descripcion;
+        $estilo->estado = $request->estado;
+        $estilo->save();
+
+        return response()->json(['mensaje' => 'Registro Modificado Satisfactoriamente']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\EstiloAprendizaje  $estiloAprendizaje
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(EstiloAprendizaje $estiloAprendizaje)
+    public function destroy(Request $request)
     {
-        //
+        $estilo = EstiloAprendizaje::findOrFail($request->id);
+        //Actualizamos a Inactivo el Estilo de Aprendizaje
+        $estilo->estado = 0;
+        $estilo->save();
+        //Eliminamos el Estilo de Aprendizaje
+        $estilo->delete();
+
+        return response()->json(['mensaje' => 'Registro Eliminado Satisfactoriamente']);
+    }
+
+    public function showdeletes()
+    {
+        return EstiloAprendizaje::onlyTrashed()->latest()->paginate(5);
+    }
+
+    public function restoredelete(Request $request) {
+        $estilo = EstiloAprendizaje::onlyTrashed()->where('id',$request->id)->first();
+        //Habilitamos el Estilo
+        $estilo->estado=1;
+        $estilo->save();
+        //Restauramos el Estilo de Aprendizaje
+        $estilo->restore();
+
+        return response()->json(['mensaje' => 'Registro Restaurado Satisfactoriamente']);
     }
 }

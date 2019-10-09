@@ -23,14 +23,14 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                        <div class="col-12">
-                            <div class="checkbox checkbox-success mb-2">
-                                <input id="estado" type="checkbox" v-model="habilidad_social.estado">
-                                <label for="estado" v-if="habilidad_social.estado == 1">Activo</label>
-                                <label for="estado" v-else>Inactivo</label>
-                            </div>
+                    <div class="col-12">
+                        <div class="checkbox checkbox-success mb-2">
+                            <input id="estado" type="checkbox" v-model="habilidad_social.estado">
+                            <label for="estado" v-if="habilidad_social.estado == 1">Activo</label>
+                            <label for="estado" v-else>Inactivo</label>
                         </div>
                     </div>
+                </div>
             </div>
             <div class="modal-footer" id="habilidad-edit-footer">
                 <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">

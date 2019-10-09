@@ -310,10 +310,165 @@ var app = new Vue({
             $('#estilo-create').modal('show')
         },
         guardarEstiloAprendizaje() {
-
+            axios.post('/estilo-aprendizaje/guardar',this.estilo_aprendizaje)
+                .then((response) => (
+                    swal.fire({
+                        type : 'success',
+                        title : 'Estilo de Aprendizaje',
+                        text : response.data.mensaje,
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor:"#1abc9c",
+                    }).then(respuesta => {
+                        if(respuesta.value) {
+                            $('#estilo-create').modal('hide'),
+                            this.listarEstilos(),
+                            this.getResultsEstilos()
+                        }
+                    })
+                ))
+                .catch((errors) => {
+                    if(response = errors.response) {
+                        this.errores = response.data.errors,
+                        console.clear()
+                    }
+                })
+        },
+        mostrarEstiloAprendizaje(id) {
+            this.limpiar('estilo-aprendizaje')
+            axios.get('/estilo-aprendizaje/mostrar',{params:{id:id}})
+            .then((response) => {
+                let men = response.data
+                this.estilo_aprendizaje.id =  men.id
+                this.estilo_aprendizaje.nombre = men.nombre
+                this.estilo_aprendizaje.descripcion = men.descripcion
+                this.estilo_aprendizaje.estado = men.estado
+                $('#estilo-show').modal('show')
+            })
+        },
+        editarEstiloAprendizaje(id) {
+            this.limpiar('estilo-aprendizaje')
+            axios.get('/estilo-aprendizaje/mostrar',{params:{id:id}})
+            .then((response) => {
+                let men = response.data
+                this.estilo_aprendizaje.id =  men.id
+                this.estilo_aprendizaje.nombre = men.nombre
+                this.estilo_aprendizaje.descripcion = men.descripcion
+                this.estilo_aprendizaje.estado = men.estado
+                $('#estilo-edit').modal('show')
+            })
+        },
+        actualizarEstiloAprendizaje() {
+            axios.put('/estilo-aprendizaje/actualizar',this.estilo_aprendizaje)
+                .then((response) => (
+                    swal.fire({
+                        type : 'success',
+                        title : 'Estilo de Aprendizaje',
+                        text : response.data.mensaje,
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor:"#1abc9c",
+                    }).then(respuesta => {
+                        if(respuesta.value) {
+                            this.listarEstilos(),
+                            this.getResultsEstilos()
+                            $('#estilo-edit').modal('hide')
+                        }
+                    })
+                ))
+                .catch((errors) => {
+                    if(response = errors.response) {
+                        this.errores = response.data.errors
+                        //console.clear()
+                    }
+                })
+        },
+        eliminarEstiloAprendizaje(id) {
+            swal.fire({
+                title:"¿Está Seguro de Eliminar?",
+                text:'Puede Restaurarlo a posteriori',
+                type:"question",
+                showCancelButton: true,
+                confirmButtonText:"Si",
+                confirmButtonColor:"#38c172",
+                cancelButtonText:"No",
+                cancelButtonColor:"#e3342f"
+            }).then( response => {
+                if(response.value){
+                    axios.post('/estilo-aprendizaje/eliminar',{id:id})
+                    .then((response) => (
+                        swal.fire({
+                            type : 'success',
+                            title : 'Estilo de Aprendizaje',
+                            text : response.data.mensaje,
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor:"#1abc9c",
+                        }).then(respuesta => {
+                            if(respuesta.value) {
+                                this.listarEstilos(),
+                                this.getResultsEstilos()
+                            }
+                        })
+                    ))
+                    .catch((errors) => {
+                        if(response = errors.response) {
+                            this.errores = response.data.errors
+                        }
+                    })
+                }
+            }).catch(error => {
+                this.$Progress.fail()
+                swal.showValidationError(
+                    `Ocurrió un Error: ${error.response.status}`
+                )
+            })
         },
         mostrarEliminadosEstiloAprendizaje() {
-
+            this.showdeletes_estilo = true
+            axios.get('/estilo-aprendizaje/mostrarEliminados').then(({ data }) => (
+                this.estiloAprendizajes = data,
+                this.total_aprendizajes = this.estiloAprendizajes.total
+            ))
+            this.getResultsEstilos()
+        },
+        restaurarEstiloAprendizaje(id) {
+            swal.fire({
+                title:"¿Está Seguro de Restaurar el Registro?",
+                text:'Puede Eliminarlo Cuando desee',
+                type:"question",
+                showCancelButton: true,
+                confirmButtonText:"Si",
+                confirmButtonColor:"#38c172",
+                cancelButtonText:"No",
+                cancelButtonColor:"#e3342f"
+            }).then( response => {
+                if(response.value){
+                    axios.post('/estilo-aprendizaje/restaurar',{id:id})
+                    .then((response) => (
+                        swal.fire({
+                            type : 'success',
+                            title : 'Estilo de Aprendizaje',
+                            text : response.data.mensaje,
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor:"#1abc9c",
+                        }).then(respuesta => {
+                            if(respuesta.value) {
+                                this.showdeletes_estilo = false;
+                                this.listarEstilos(),
+                                this.getResultsEstilos()
+                            }
+                        })
+                    ))
+                    .catch((errors) => {
+                        if(response = errors.response) {
+                            this.errores = response.data.errors
+                        }
+                    })
+                }
+            }).catch(error => {
+                this.$Progress.fail()
+                swal.showValidationError(
+                    `Ocurrió un Error: ${error.response.status}`
+                )
+            })
         }
 
     },
