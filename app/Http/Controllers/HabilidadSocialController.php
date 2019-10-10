@@ -26,6 +26,7 @@ class HabilidadSocialController extends Controller
     public function lista() {
         return HabilidadSocial::latest()->paginate(5);
     }
+
     public function create()
     {
         //
@@ -70,8 +71,6 @@ class HabilidadSocialController extends Controller
     public function destroy(Request $request)
     {
         $habilidad = HabilidadSocial::findOrFail($request->id);
-        $habilidad->estado=0;
-        $habilidad->save();
 
         $habilidad->delete();
 
@@ -85,8 +84,6 @@ class HabilidadSocialController extends Controller
 
     public function restoredelete(Request $request) {
         $habilidad = HabilidadSocial::onlyTrashed()->where('id',$request->id)->first();
-        $habilidad->estado=1;
-        $habilidad->save();
         
         $habilidad->restore();
 

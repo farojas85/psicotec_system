@@ -31,6 +31,6 @@
                     <i class="fa fa-save"></i> Guardar
                 </button>
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+    </div>
+</div>

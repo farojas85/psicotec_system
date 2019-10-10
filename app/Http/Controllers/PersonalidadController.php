@@ -7,79 +7,78 @@ use Illuminate\Http\Request;
 
 class PersonalidadController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function __construct()
+    {
+        $this->middleware('permission:personalidad.create')->only(['create','store']);
+        $this->middleware('permission:personalidad.index')->only('index');
+        $this->middleware('permission:personalidad.edit')->only(['edit','update']);
+        $this->middleware('permission:personalidad.show')->only('show');
+        $this->middleware('permission:personalidad.destroy')->only('destroy');
+        $this->middleware('permission:personalidad.showdeletes')->only('showdeletes');
+        $this->middleware('permission:personalidad.restoredelete')->only('restoredelete');
+    }
+
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function lista() {
+        return Personalidad::latest()->paginate(5);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'codigo' => 'required|string|min:2',
+            'nombre' => 'required|string|max:191',
+        ]);
+
+        $personalidad = Personalidad::create([
+            'codigo' => $request->codigo,
+            'nombre' => $request->nombre
+        ]);
+
+        return response()->json(['mensaje' => 'Registro Insertado Satisfactoriamente']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Personalidad  $personalidad
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Personalidad $personalidad)
+    public function show(Request $request)
     {
-        //
+        return Personalidad::findOrFail($request->id);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Personalidad  $personalidad
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Personalidad $personalidad)
+    public function update(Request $request)
     {
-        //
+        $personalidad = Personalidad::findOrFail($request->id);
+
+        $personalidad->codigo = $request->codigo;
+        $personalidad->nombre = $request->nombre;
+        $personalidad->estado = $request->estado;
+        $personalidad->save();
+
+        return response()->json(['mensaje' => 'Registro Insertado Satisfactoriamente']);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Personalidad  $personalidad
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Personalidad $personalidad)
+    public function destroy(Request $request)
     {
-        //
+        $personalidad = Personalidad::findOrFail($request->id);
+
+        $personalidad->delete();
+
+        return response()->json(['mensaje' => 'Registro Eliminado Satisfactoriamente']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Personalidad  $personalidad
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Personalidad $personalidad)
+    public function showdeletes() 
     {
-        //
+        return Personalidad::onlyTrashed()->latest()->paginate(5);
+    }
+
+    public function restoredelete(Request $request) 
+    {
+        $personalidad = Personalidad::onlyTrashed()->where('id',$request->id)->first();
+
+        $personalidad->restore();
+
+        return response()->json(['mensaje' => 'Registro Restaurado Satisfactoriamente']);
     }
 }

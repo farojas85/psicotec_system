@@ -72,9 +72,6 @@ class AreaController extends Controller
     public function destroy(Request $request)
     {
         $area = Area::findOrFail($request->id);
-        //Actualizamos a Inactivo el area de Aprendizaje
-        $area->estado = 0;
-        $area->save();
         //Eliminamos el area de Aprendizaje
         $area->delete();
 
@@ -89,9 +86,6 @@ class AreaController extends Controller
     public function restoredelete(Request $request) {
 
         $area = Area::onlyTrashed()->where('id',$request->id)->first();
-        //Habilitamos el área
-        $area->estado=1;
-        $area->save();
         //Restauramos el área
         $area->restore();
 

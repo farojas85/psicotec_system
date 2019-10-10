@@ -73,9 +73,6 @@ class EstiloAprendizajeController extends Controller
     public function destroy(Request $request)
     {
         $estilo = EstiloAprendizaje::findOrFail($request->id);
-        //Actualizamos a Inactivo el Estilo de Aprendizaje
-        $estilo->estado = 0;
-        $estilo->save();
         //Eliminamos el Estilo de Aprendizaje
         $estilo->delete();
 
@@ -89,9 +86,6 @@ class EstiloAprendizajeController extends Controller
 
     public function restoredelete(Request $request) {
         $estilo = EstiloAprendizaje::onlyTrashed()->where('id',$request->id)->first();
-        //Habilitamos el Estilo
-        $estilo->estado=1;
-        $estilo->save();
         //Restauramos el Estilo de Aprendizaje
         $estilo->restore();
 

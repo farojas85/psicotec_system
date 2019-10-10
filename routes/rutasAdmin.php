@@ -91,3 +91,14 @@ Route::group(['prefix' => 'area', 'middleware' => 'auth'], function(){
     Route::get('mostrarEliminados', 'AreaController@showdeletes')->name('area.showdeletes');
     Route::post('restaurar','AreaController@restoredelete')->name('area.restoredelete');
 });
+
+Route::group(['prefix' => 'personalidad', 'middleware' => 'auth'], function(){
+    Route::get('/', 'PersonalidadController@index')->name('personalidad.index');
+    Route::get('lista', 'PersonalidadController@lista')->name('personalidad.lista');
+    Route::post('guardar','PersonalidadController@store')->name('personalidad.store');
+    Route::get('mostrar', 'PersonalidadController@show')->name('personalidad.show');
+    Route::put('actualizar','PersonalidadController@update')->name('personalidad.update');
+    Route::post('eliminar','PersonalidadController@destroy')->name('personalidad.destroy');
+    Route::get('mostrarEliminados', 'PersonalidadController@showdeletes')->name('personalidad.showdeletes');
+    Route::post('restaurar','PersonalidadController@restoredelete')->name('personalidad.restoredelete');
+});

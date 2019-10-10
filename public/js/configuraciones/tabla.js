@@ -25,9 +25,18 @@ var app = new Vue({
             siglas:'',
             estado:''
         },
+        personalidads:{},
+        total_personalidads:'',
+        personalidad:{
+            id:'',
+            codigo:'',
+            nombre:'',
+            estado:''
+        },
         showdeletes:false,
         showdeletes_estilo:false,
         showdeletes_area:false,
+        showdeletes_personalidad:false,
         errores:[],
         offset:4
     },
@@ -97,6 +106,28 @@ var app = new Vue({
                 from++;
             }
             return pagesArray;
+        },
+        isActivedPersonalidad() {
+            return this.personalidads.current_page;
+        },
+        pagesNumberPersonalidad() {
+            if (!this.personalidads.to) {
+                return [];
+            }
+            var from = this.personalidads.current_page - this.offset;
+            if (from < 1) {
+                from = 1;
+            }
+            var to = from + (this.offset * 2);
+            if (to >= this.personalidads.last_page) {
+                to = this.personalidads.last_page;
+            }
+            var pagesArray = [];
+            while (from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
         }
     },
     methods:{
@@ -147,6 +178,11 @@ var app = new Vue({
                     this.area.nombre=''
                     this.area.estado=''
                     break
+                case 'personalidad':
+                    this.personalidad.id=''
+                    this.personalidad.codigo=''
+                    this.personalidad.nombre=''
+                    this.personalidad.estado=''
             }
         },
         nuevaHabilidadSocial()
@@ -699,6 +735,203 @@ var app = new Vue({
                 )
             })
         },
+        listarPersonalidades() {
+            axios.get('/personalidad/lista').then(({ data }) => (
+                this.personalidads = data,
+                this.total_personalidads = this.personalidads.total
+             ))
+        },
+        getResultsPersonalidades(page=1) {   
+            if(this.showdeletes_personalidad == false) {
+                axios.get('/personalidad/lista?page=' + page)
+                .then(response => {
+                    this.personalidads = response.data
+                    this.total_personalidads = this.personalidads.total
+                }); 
+            }
+            else {
+                axios.get('/personalidad/mostrarEliminados?page=' + page)
+                .then(response => {
+                    this.personalidads = response.data
+                    this.total_personalidads = this.personalidads.total
+                });
+            }
+        },
+        changePagePersonalidades(page) {
+            this.personalidads.current_page = page
+            this.getResultsPersonalidades(page)
+        },
+        nuevaPersonalidad()
+        {
+            this.limpiar('personalidad')
+            $('#personalidad-create').modal('show')
+        },
+        guardarPersonalidad() {
+            axios.post('/personalidad/guardar',this.personalidad)
+                .then((response) => (
+                    swal.fire({
+                        type : 'success',
+                        title : 'Personalidad',
+                        text : response.data.mensaje,
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor:"#1abc9c",
+                    }).then(respuesta => {
+                        if(respuesta.value) {
+                            $('#personalidad-create').modal('hide'),
+                            this.listarPersonalidades(),
+                            this.getResultsPersonalidades()
+                        }
+                    })
+                ))
+                .catch((errors) => {
+                    if(response = errors.response) {
+                        this.errores = response.data.errors,
+                        console.clear()
+                    }
+                })
+        },
+        mostrarPersonalidad(id) {
+            this.limpiar('personalidad')
+            axios.get('/personalidad/mostrar',{params:{id:id}})
+            .then((response) => {
+                let men = response.data
+                this.personalidad.id =  men.id
+                this.personalidad.nombre = men.nombre
+                this.personalidad.codigo = men.codigo
+                this.personalidad.estado = men.estado
+                $('#personalidad-show').modal('show')
+            })
+        },
+        editarPersonalidad(id) {
+            this.limpiar('personalidad')
+            axios.get('/personalidad/mostrar',{params:{id:id}})
+            .then((response) => {
+                let men = response.data
+                this.personalidad.id =  men.id
+                this.personalidad.nombre = men.nombre
+                this.personalidad.codigo = men.codigo
+                this.personalidad.estado = men.estado
+                $('#personalidad-edit').modal('show')
+            })
+        },
+        actualizarPersonalidad() {
+            axios.put('/personalidad/actualizar',this.personalidad)
+                .then((response) => (
+                    swal.fire({
+                        type : 'success',
+                        title : 'Personalidad',
+                        text : response.data.mensaje,
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor:"#1abc9c",
+                    }).then(respuesta => {
+                        if(respuesta.value) {
+                            this.listarPersonalidades(),
+                            this.getResultsPersonalidades()
+                            $('#personalidad-edit').modal('hide')
+                        }
+                    })
+                ))
+                .catch((errors) => {
+                    if(response = errors.response) {
+                        this.errores = response.data.errors
+                        //console.clear()
+                    }
+                })
+        },
+        eliminarPersonalidad(id) {
+            swal.fire({
+                title:"¿Está Seguro de Eliminar?",
+                text:'Puede Restaurarlo Luego, si lo desea',
+                type:"question",
+                showCancelButton: true,
+                confirmButtonText:"Si",
+                confirmButtonColor:"#38c172",
+                cancelButtonText:"No",
+                cancelButtonColor:"#e3342f"
+            }).then( response => {
+                if(response.value){
+                    axios.post('/personalidad/eliminar',{id:id})
+                    .then((response) => (
+                        swal.fire({
+                            type : 'success',
+                            title : 'Personalidad',
+                            text : response.data.mensaje,
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor:"#1abc9c",
+                        }).then(respuesta => {
+                            if(respuesta.value) {
+                                this.listarPersonalidades(),
+                                this.getResultsPersonalidades()
+                            }
+                        })
+                    ))
+                    .catch((errors) => {
+                        if(response = errors.response) {
+                            this.errores = response.data.errors
+                        }
+                    })
+                }
+            }).catch(error => {
+                this.$Progress.fail()
+                swal.showValidationError(
+                    `Ocurrió un Error: ${error.response.status}`
+                )
+            })
+        },
+        mostrarEliminadosPersonalidad() {
+            this.showdeletes_personalidad = true
+            axios.get('/personalidad/mostrarEliminados').then(({ data }) => (
+                this.personalidads = data,
+                this.total_personalidads = this.personalidads.total
+            ))
+            this.getResultsPersonalidades()
+        },
+        mostrarActivosPersonalidad() {
+            this.showdeletes_personalidad=false;
+            this.listarPersonalidades()
+            this.getResultsPersonalidades()
+        },
+        restaurarPersonalidad(id) {
+            swal.fire({
+                title:"¿Está Seguro de Restaurar el Registro?",
+                text:'Puede Eliminarlo Cuando desee',
+                type:"question",
+                showCancelButton: true,
+                confirmButtonText:"Si",
+                confirmButtonColor:"#38c172",
+                cancelButtonText:"No",
+                cancelButtonColor:"#e3342f"
+            }).then( response => {
+                if(response.value){
+                    axios.post('/personalidad/restaurar',{id:id})
+                    .then((response) => (
+                        swal.fire({
+                            type : 'success',
+                            title : 'Personalidad',
+                            text : response.data.mensaje,
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor:"#1abc9c",
+                        }).then(respuesta => {
+                            if(respuesta.value) {
+                                this.showdeletes_personalidad = false;
+                                this.listarPersonalidades(),
+                                this.getResultsPersonalidades()
+                            }
+                        })
+                    ))
+                    .catch((errors) => {
+                        if(response = errors.response) {
+                            this.errores = response.data.errors
+                        }
+                    })
+                }
+            }).catch(error => {
+                this.$Progress.fail()
+                swal.showValidationError(
+                    `Ocurrió un Error: ${error.response.status}`
+                )
+            })
+        },
     },
     created() {
         this.listarHabilidades()
@@ -707,5 +940,7 @@ var app = new Vue({
         this.getResultsEstilos()
         this.listarAreas()
         this.getResultsAreas()
+        this.listarPersonalidades()
+        this.getResultsPersonalidades()
     }
 })

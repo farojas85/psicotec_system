@@ -38,7 +38,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#areas" data-toggle="tab" aria-expanded="false" class="nav-link" >
+                            <a href="#personalidades" data-toggle="tab" aria-expanded="false" class="nav-link" >
                                 Personalidades
                             </a>
                         </li>
@@ -59,6 +59,9 @@
                         </div>
                         <div class="tab-pane" id="areas">
                             @include('Configuraciones.Area.index')
+                        </div>
+                        <div class="tab-pane" id="personalidades">
+                            @include('Configuraciones.Personalidad.index')
                         </div>
                     </div>
                 </div>
