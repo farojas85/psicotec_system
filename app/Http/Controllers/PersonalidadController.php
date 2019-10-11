@@ -56,7 +56,7 @@ class PersonalidadController extends Controller
         $personalidad->estado = $request->estado;
         $personalidad->save();
 
-        return response()->json(['mensaje' => 'Registro Insertado Satisfactoriamente']);
+        return response()->json(['mensaje' => 'Registro Modificado Satisfactoriamente']);
     }
 
     public function destroy(Request $request)
@@ -80,5 +80,9 @@ class PersonalidadController extends Controller
         $personalidad->restore();
 
         return response()->json(['mensaje' => 'Registro Restaurado Satisfactoriamente']);
+    }
+
+    public function filtro() {
+        return Personalidad::where('estado',1)->select('id','nombre')->orderBy('id','ASC')->get();
     }
 }

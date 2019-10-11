@@ -91,4 +91,9 @@ class AreaController extends Controller
 
         return response()->json(['mensaje' => 'Registro Restaurado Satisfactoriamente']);
     }
+
+    public function filtro()
+    {
+        return Area::where('estado',1)->select('id','nombre')->orderBy('id','ASC')->get();
+    }
 }

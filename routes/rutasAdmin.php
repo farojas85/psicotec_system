@@ -90,6 +90,7 @@ Route::group(['prefix' => 'area', 'middleware' => 'auth'], function(){
     Route::post('eliminar','AreaController@destroy')->name('area.destroy');
     Route::get('mostrarEliminados', 'AreaController@showdeletes')->name('area.showdeletes');
     Route::post('restaurar','AreaController@restoredelete')->name('area.restoredelete');
+    Route::get('filtro','AreaController@filtro')->name('area.filtro');
 });
 
 Route::group(['prefix' => 'personalidad', 'middleware' => 'auth'], function(){
@@ -101,4 +102,18 @@ Route::group(['prefix' => 'personalidad', 'middleware' => 'auth'], function(){
     Route::post('eliminar','PersonalidadController@destroy')->name('personalidad.destroy');
     Route::get('mostrarEliminados', 'PersonalidadController@showdeletes')->name('personalidad.showdeletes');
     Route::post('restaurar','PersonalidadController@restoredelete')->name('personalidad.restoredelete');
+    Route::get('filtro','PersonalidadController@filtro')->name('personalidad.filtro');
+});
+
+Route::group(['prefix' => 'ocupacion', 'middleware' => 'auth'], function(){
+    Route::get('/', 'OcupacionController@index')->name('ocupacion.index');
+    Route::get('lista', 'OcupacionController@lista')->name('ocupacion.lista');
+    Route::post('guardar','OcupacionController@store')->name('ocupacion.store');
+    Route::get('mostrar', 'OcupacionController@show')->name('ocupacion.show');
+    Route::put('actualizar','OcupacionController@update')->name('ocupacion.update');
+    Route::post('eliminar','OcupacionController@destroy')->name('ocupacion.destroy');
+    Route::get('mostrarEliminados', 'OcupacionController@showdeletes')->name('ocupacion.showdeletes');
+    Route::get('mostrarActivos','OcupacionController@showactives')->name('ocupacion.showactives');
+    Route::post('restaurar','OcupacionController@restoredelete')->name('ocupacion.restoredelete');
+    Route::get('filtro','OcupacionController@filtro')->name('ocupacion.filtro');
 });

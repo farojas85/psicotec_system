@@ -43,7 +43,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="" data-toggle="tab" aria-expanded="false" class="nav-link" >
+                            <a href="#ocupaciones" data-toggle="tab" aria-expanded="false" class="nav-link" >
                                 Ocupaciones
                             </a>
                         </li>
@@ -62,6 +62,9 @@
                         </div>
                         <div class="tab-pane" id="personalidades">
                             @include('Configuraciones.Personalidad.index')
+                        </div>
+                        <div class="tab-pane" id="ocupaciones">
+                            @include('Configuraciones.Ocupacion.index')
                         </div>
                     </div>
                 </div>

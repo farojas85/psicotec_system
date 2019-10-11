@@ -18,6 +18,7 @@ var app = new Vue({
             estado:''
         },
         areas:{},
+        areas_filtro:{},
         total_areas:'',
         area:{
             id:'',
@@ -26,6 +27,7 @@ var app = new Vue({
             estado:''
         },
         personalidads:{},
+        personalidads_filtro:{},
         total_personalidads:'',
         personalidad:{
             id:'',
@@ -33,10 +35,20 @@ var app = new Vue({
             nombre:'',
             estado:''
         },
+        ocupaciones:{},
+        total_ocupaciones:'',
+        ocupacion:{
+            id:'',
+            nombre:'',
+            area_id:'',
+            personalidad_id:'',
+            estado:''
+        },
         showdeletes:false,
         showdeletes_estilo:false,
         showdeletes_area:false,
         showdeletes_personalidad:false,
+        showdeletes_ocupacion:false,
         errores:[],
         offset:4
     },
@@ -128,6 +140,28 @@ var app = new Vue({
                 from++;
             }
             return pagesArray;
+        },
+        isActivedOcupacion() {
+            return this.ocupaciones.current_page;
+        },
+        pagesNumberOcupacion() {
+            if (!this.ocupaciones.to) {
+                return [];
+            }
+            var from = this.ocupaciones.current_page - this.offset;
+            if (from < 1) {
+                from = 1;
+            }
+            var to = from + (this.offset * 2);
+            if (to >= this.ocupaciones.last_page) {
+                to = this.ocupaciones.last_page;
+            }
+            var pagesArray = [];
+            while (from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
         }
     },
     methods:{
@@ -183,6 +217,12 @@ var app = new Vue({
                     this.personalidad.codigo=''
                     this.personalidad.nombre=''
                     this.personalidad.estado=''
+                case 'ocupacion': 
+                    this.ocupacion.id=''
+                    this.ocupacion.nombre=''
+                    this.ocupacion.area_id=''
+                    this.ocupacion.personalidad_id=''
+                    this.ocupacion.estado=''
             }
         },
         nuevaHabilidadSocial()
@@ -547,7 +587,7 @@ var app = new Vue({
             axios.get('/area/lista').then(({ data }) => (
                 this.areas = data,
                 this.total_areas = this.areas.total
-             ))
+            ))
         },
         getResultsAreas(page=1) {   
             if(this.showdeletes_area == false) {
@@ -568,6 +608,11 @@ var app = new Vue({
         changePageAreas(page) {
             this.areas.current_page = page
             this.getResultsAreas(page)
+        },
+        filtroArea(){
+            axios.get('/area/filtro').then(({ data }) => (
+                this.areas_filtro = data
+            ))
         },
         nuevaArea()
         {
@@ -761,6 +806,11 @@ var app = new Vue({
             this.personalidads.current_page = page
             this.getResultsPersonalidades(page)
         },
+        filtroPersonalidad(){
+            axios.get('/personalidad/filtro').then(({ data }) => (
+                this.personalidads_filtro = data
+            ))
+        },
         nuevaPersonalidad()
         {
             this.limpiar('personalidad')
@@ -932,6 +982,212 @@ var app = new Vue({
                 )
             })
         },
+        listarOcupaciones() {
+            axios.get('/ocupacion/lista').then(({ data }) => (
+                this.ocupaciones = data,
+                this.total_ocupaciones = this.ocupaciones.total
+            ))
+        },
+        getResultsOcupaciones(page=1) {   
+            if(this.showdeletes_ocupacion == false) {
+                axios.get('/ocupacion/lista?page=' + page)
+                .then(response => {
+                    this.ocupaciones = response.data
+                    this.total_ocupaciones = this.ocupaciones.total
+                }); 
+            }
+            else {
+                axios.get('/ocupacion/mostrarEliminados?page=' + page)
+                .then(response => {
+                    this.ocupaciones = response.data
+                    this.total_ocupaciones = this.ocupaciones.total
+                });
+            }
+        },
+        changePageOcupaciones(page) {
+            this.ocupaciones.current_page = page
+            this.getResultsOcupaciones(page)
+        },
+        nuevaOcupacion()
+        {
+
+            this.limpiar('ocupacion')
+            this.filtroArea()
+            this.filtroPersonalidad()
+            $('#ocupacion-create').modal('show')
+        },
+        guardarOcupacion() {
+            axios.post('/ocupacion/guardar',this.ocupacion)
+                .then((response) => (
+                    swal.fire({
+                        type : 'success',
+                        title : 'Ocupación',
+                        text : response.data.mensaje,
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor:"#1abc9c",
+                    }).then(respuesta => {
+                        if(respuesta.value) {
+                            $('#ocupacion-create').modal('hide'),
+                            this.listarOcupaciones(),
+                            this.getResultsOcupaciones()
+                        }
+                    })
+                ))
+                .catch((errors) => {
+                    if(response = errors.response) {
+                        this.errores = response.data.errors,
+                        console.clear()
+                    }
+                })
+        },
+        mostrarOcupacion(id) {
+            this.limpiar('ocupacion')
+            this.filtroArea()
+            this.filtroPersonalidad()
+            axios.get('/ocupacion/mostrar',{params:{id:id}})
+            .then((response) => {
+                let men = response.data
+                this.ocupacion.id =  men.id
+                this.ocupacion.nombre = men.nombre
+                this.ocupacion.area_id = men.area_id
+                this.ocupacion.personalidad_id = men.personalidad_id
+                this.ocupacion.estado = men.estado
+                $('#ocupacion-show').modal('show')
+            })
+        },
+        editarOcupacion(id) {
+            this.limpiar('ocupacion')
+            this.filtroArea()
+            this.filtroPersonalidad()
+            axios.get('/ocupacion/mostrar',{params:{id:id}})
+            .then((response) => {
+                let men = response.data
+                this.ocupacion.id =  men.id
+                this.ocupacion.nombre = men.nombre
+                this.ocupacion.area_id = men.area_id
+                this.ocupacion.personalidad_id = men.personalidad_id
+                this.ocupacion.estado = men.estado
+                $('#ocupacion-edit').modal('show')
+            })
+        },
+        actualizarOcupacion() {
+            axios.put('/ocupacion/actualizar',this.ocupacion)
+                .then((response) => (
+                    swal.fire({
+                        type : 'success',
+                        title : 'Ocupación',
+                        text : response.data.mensaje,
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor:"#1abc9c",
+                    }).then(respuesta => {
+                        if(respuesta.value) {
+                            this.listarOcupaciones(),
+                            this.getResultsOcupaciones()
+                            $('#ocupacion-edit').modal('hide')
+                        }
+                    })
+                ))
+                .catch((errors) => {
+                    if(response = errors.response) {
+                        this.errores = response.data.errors
+                        //console.clear()
+                    }
+                })
+        },
+        eliminarOcupacion(id) {
+            swal.fire({
+                title:"¿Está Seguro de Eliminar?",
+                text:'Puede Restaurarlo Luego, si lo desea',
+                type:"question",
+                showCancelButton: true,
+                confirmButtonText:"Si",
+                confirmButtonColor:"#38c172",
+                cancelButtonText:"No",
+                cancelButtonColor:"#e3342f"
+            }).then( response => {
+                if(response.value){
+                    axios.post('/ocupacion/eliminar',{id:id})
+                    .then((response) => (
+                        swal.fire({
+                            type : 'success',
+                            title : 'Ocupación',
+                            text : response.data.mensaje,
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor:"#1abc9c",
+                        }).then(respuesta => {
+                            if(respuesta.value) {
+                                this.listarOcupaciones(),
+                                this.getResultsOcupaciones()
+                            }
+                        })
+                    ))
+                    .catch((errors) => {
+                        if(response = errors.response) {
+                            this.errores = response.data.errors
+                        }
+                    })
+                }
+            }).catch(error => {
+                this.$Progress.fail()
+                swal.showValidationError(
+                    `Ocurrió un Error: ${error.response.status}`
+                )
+            })
+        },
+        mostrarEliminadosOcupacion() {
+            this.showdeletes_ocupacion = true
+            axios.get('/ocupacion/mostrarEliminados').then(({ data }) => (
+                this.ocupaciones = data,
+                this.total_ocupaciones = this.ocupaciones.total
+            ))
+            this.getResultsOcupaciones()
+        },
+        mostrarActivosOcupacion() {
+            this.showdeletes_ocupacion=false;
+            this.listarOcupaciones()
+            this.getResultsOcupaciones()
+        },
+        restaurarOcupacion(id) {
+            swal.fire({
+                title:"¿Está Seguro de Restaurar el Registro?",
+                text:'Puede Eliminarlo Cuando desee',
+                type:"question",
+                showCancelButton: true,
+                confirmButtonText:"Si",
+                confirmButtonColor:"#38c172",
+                cancelButtonText:"No",
+                cancelButtonColor:"#e3342f"
+            }).then( response => {
+                if(response.value){
+                    axios.post('/ocupacion/restaurar',{id:id})
+                    .then((response) => (
+                        swal.fire({
+                            type : 'success',
+                            title : 'Ocupación',
+                            text : response.data.mensaje,
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor:"#1abc9c",
+                        }).then(respuesta => {
+                            if(respuesta.value) {
+                                this.showdeletes_ocupacion = false;
+                                this.listarOcupaciones(),
+                                this.getResultsOcupaciones()
+                            }
+                        })
+                    ))
+                    .catch((errors) => {
+                        if(response = errors.response) {
+                            this.errores = response.data.errors
+                        }
+                    })
+                }
+            }).catch(error => {
+                this.$Progress.fail()
+                swal.showValidationError(
+                    `Ocurrió un Error: ${error.response.status}`
+                )
+            })
+        },
     },
     created() {
         this.listarHabilidades()
@@ -942,5 +1198,7 @@ var app = new Vue({
         this.getResultsAreas()
         this.listarPersonalidades()
         this.getResultsPersonalidades()
+        this.listarOcupaciones()
+        this.getResultsOcupaciones()
     }
 })
