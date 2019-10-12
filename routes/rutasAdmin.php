@@ -117,3 +117,29 @@ Route::group(['prefix' => 'ocupacion', 'middleware' => 'auth'], function(){
     Route::post('restaurar','OcupacionController@restoredelete')->name('ocupacion.restoredelete');
     Route::get('filtro','OcupacionController@filtro')->name('ocupacion.filtro');
 });
+
+Route::group(['prefix' => 'test-burga', 'middleware' => 'auth'], function(){
+    Route::get('/', 'BurgaController@index')->name('burga.index');
+    // Route::get('lista', 'OcupacionController@lista')->name('ocupacion.lista');
+    // Route::post('guardar','OcupacionController@store')->name('ocupacion.store');
+    // Route::get('mostrar', 'OcupacionController@show')->name('ocupacion.show');
+    // Route::put('actualizar','OcupacionController@update')->name('ocupacion.update');
+    // Route::post('eliminar','OcupacionController@destroy')->name('ocupacion.destroy');
+    // Route::get('mostrarEliminados', 'OcupacionController@showdeletes')->name('ocupacion.showdeletes');
+    // Route::get('mostrarActivos','OcupacionController@showactives')->name('ocupacion.showactives');
+    // Route::post('restaurar','OcupacionController@restoredelete')->name('ocupacion.restoredelete');
+    // Route::get('filtro','OcupacionController@filtro')->name('ocupacion.filtro');
+});
+
+Route::group(['prefix' => 'burga-alternativa', 'middleware' => 'auth'], function(){
+    Route::get('/', 'BurgaAlternativaController@index')->name('burga-alternativa.index');
+    Route::get('lista', 'BurgaAlternativaController@lista')->name('burga-alternativa.lista');
+    Route::post('guardar','BurgaAlternativaController@store')->name('burga-alternativa.store');
+    Route::get('mostrar', 'BurgaAlternativaController@show')->name('burga-alternativa.show');
+    Route::put('actualizar','BurgaAlternativaController@update')->name('burga-alternativa.update');
+    Route::post('eliminar','BurgaAlternativaController@destroy')->name('burga-alternativa.destroy');
+    Route::get('mostrarEliminados', 'BurgaAlternativaController@showdeletes')->name('burga-alternativa.showdeletes');
+    Route::get('mostrarActivos','BurgaAlternativaController@showactives')->name('burga-alternativa.showactives');
+    Route::post('restaurar','BurgaAlternativaController@restoredelete')->name('burga-alternativa.restoredelete');
+    Route::get('filtro','BurgaAlternativaController@filtro')->name('burga-alternativa.filtro');
+});

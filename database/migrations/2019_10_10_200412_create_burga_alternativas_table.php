@@ -15,7 +15,9 @@ class CreateBurgaAlternativasTable extends Migration
     {
         Schema::create('burga_alternativas', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('nombre');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

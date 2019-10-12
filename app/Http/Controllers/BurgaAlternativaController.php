@@ -7,79 +7,86 @@ use Illuminate\Http\Request;
 
 class BurgaAlternativaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function __construct()
+    {
+        $this->middleware('permission:burga-alternativa.create')->only(['create','store']);
+        $this->middleware('permission:burga-alternativa.index')->only('index');
+        $this->middleware('permission:burga-alternativa.edit')->only(['edit','update']);
+        $this->middleware('permission:burga-alternativa.show')->only('show');
+        $this->middleware('permission:burga-alternativa.destroy')->only('destroy');
+        $this->middleware('permission:burga-alternativa.show-deletes')->only('showdeletes');
+        $this->middleware('permission:burga-alternativa.show-actives')->only('showactives');
+        $this->middleware('permission:burga-alternativa.restore-delete')->only('restoredelete');
+    }
+
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function lista() 
     {
-        //
+        //return BurgaAlternativa::get();
+        return BurgaAlternativa::latest()->paginate(5);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nombre' => 'required|string|max:191'
+        ]);
+
+        $alternativa = BurgaAlternativa::create([
+            'nombre' => $request->nombre
+        ]);
+
+        return response()->json(['mensaje' => 'Registro Insertado Satisfactoriamente']);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\BurgaAlternativa  $burgaAlternativa
-     * @return \Illuminate\Http\Response
-     */
-    public function show(BurgaAlternativa $burgaAlternativa)
+    public function show(Request $request)
     {
-        //
+        return BurgaAlternativa::findOrFail($request->id);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\BurgaAlternativa  $burgaAlternativa
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(BurgaAlternativa $burgaAlternativa)
+    public function update(Request $request)
     {
-        //
+        $alternativa = BurgaAlternativa::findOrFail($request->id);
+
+        $alternativa->nombre = $request->nombre;
+        $alternativa->save();
+
+        return response()->json(['mensaje' => 'Registro Modificado Satisfactoriamente']);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\BurgaAlternativa  $burgaAlternativa
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, BurgaAlternativa $burgaAlternativa)
+    public function destroy(Request $request)
     {
-        //
+        $alternativa = BurgaAlternativa::findOrFail($request->id);
+
+        $alternativa->delete();
+
+        return response()->json(['mensaje' => 'Registro Eliminado Satisfactoriamente']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\BurgaAlternativa  $burgaAlternativa
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(BurgaAlternativa $burgaAlternativa)
+    public function showactives() 
     {
-        //
+        return BurgaAlternativa::latest()->paginate(5);
+    }
+
+    public function showdeletes() 
+    {
+        return BurgaAlternativa::onlyTrashed()->latest()->paginate(5);
+    }
+
+    public function restoredelete(Request $request) 
+    {
+        $alternativa = BurgaAlternativa::onlyTrashed()->where('id',$request->id)->first();
+
+        $alternativa->restore();
+
+        return response()->json(['mensaje' => 'Registro Restaurado Satisfactoriamente']);
+    }
+
+    public function filtro() {
+        return BurgaAlternativa::where('estado',1)->select('id','nombre')->orderBy('id','ASC')->get();
     }
 }

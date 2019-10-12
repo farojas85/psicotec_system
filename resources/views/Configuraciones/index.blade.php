@@ -27,26 +27,34 @@
                             </a>
                         </li>
                         @endcan
+                        @can('estiloaprendizaje.index')
                         <li class="nav-item">
                             <a href="#estilos" data-toggle="tab" aria-expanded="true" class="nav-link" >
                                 Estilos de Aprendizaje
                             </a>
                         </li>
+                        @endcan
+                        @can('area.index')
                         <li class="nav-item">
                             <a href="#areas" data-toggle="tab" aria-expanded="false" class="nav-link"  >
                                 &Aacute;reas
                             </a>
                         </li>
+                        @endcan
+                        @can('personalidad.index')
                         <li class="nav-item">
                             <a href="#personalidades" data-toggle="tab" aria-expanded="false" class="nav-link" >
                                 Personalidades
                             </a>
                         </li>
+                        @endcan
+                        @can('ocupacion.index')
                         <li class="nav-item">
                             <a href="#ocupaciones" data-toggle="tab" aria-expanded="false" class="nav-link" >
                                 Ocupaciones
                             </a>
                         </li>
+                        @endcan
                     </ul>
                     <div class="tab-content">
                         @can('habilidadsocial.index')
