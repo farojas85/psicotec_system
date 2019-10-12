@@ -9,7 +9,14 @@ var app = new Vue({
         },
         burga_alternativas:[],
         total_burga_alternativas:'',
-        showdeletes_burga_alternativa:false
+        showdeletes_burga_alternativa:false,
+        burga_afirmacion:{
+            id:'',
+            nombre:''
+        },
+        burga_afirmaciones:[],
+        total_burga_afirmaciones:'',
+        showdeletes_burga_afirmacion:false,
     },
     computed:{
         isActivedBurgaAlt() {
@@ -26,6 +33,28 @@ var app = new Vue({
             var to = from + (this.offset * 2);
             if (to >= this.burga_alternativas.last_page) {
                 to = this.burga_alternativas.last_page;
+            }
+            var pagesArray = [];
+            while (from <= to) {
+                pagesArray.push(from);
+                from++;
+            }
+            return pagesArray;
+        },
+        isActivedAfirmacion() {
+            return this.burga_afirmaciones.current_page;
+        },
+        pagesNumberAfirmacion() {
+            if (!this.burga_afirmaciones.to) {
+                return [];
+            }
+            var from = this.burga_afirmaciones.current_page - this.offset;
+            if (from < 1) {
+                from = 1;
+            }
+            var to = from + (this.offset * 2);
+            if (to >= this.burga_afirmaciones.last_page) {
+                to = this.burga_afirmaciones.last_page;
             }
             var pagesArray = [];
             while (from <= to) {
@@ -67,32 +96,11 @@ var app = new Vue({
             switch(tabla){
                 case 'burga-alternativa':
                     this.burga_alternativa.id=''
-                    this.burga_alternativa.nombre=''
-                    this.burga_alternativa.estado=''
                     break
-                case 'estilo-aprendizaje':
-                    this.estilo_aprendizaje.id=''
-                    this.estilo_aprendizaje.nombre=''
-                    this.estilo_aprendizaje.descripcion=''
-                    this.estilo_aprendizaje.estado=''
+                case 'burga-afirmacion':
+                    this.burga_afirmacion.id=''
+                    this.burga_afirmacion.nombre=''
                     break
-                case 'area':
-                    this.area.id=''
-                    this.area.siglas=''
-                    this.area.nombre=''
-                    this.area.estado=''
-                    break
-                case 'personalidad':
-                    this.personalidad.id=''
-                    this.personalidad.codigo=''
-                    this.personalidad.nombre=''
-                    this.personalidad.estado=''
-                case 'ocupacion': 
-                    this.ocupacion.id=''
-                    this.ocupacion.nombre=''
-                    this.ocupacion.area_id=''
-                    this.ocupacion.personalidad_id=''
-                    this.ocupacion.estado=''
             }
         },
         nuevaAlternativa()
@@ -262,9 +270,204 @@ var app = new Vue({
                 )
             })
         },
+        listarAfirmaciones() {
+            axios.get('/burga-afirmacion/lista').then(({ data }) => (
+                this.burga_afirmaciones = data,
+                this.total_burga_afirmaciones = this.burga_afirmaciones.total
+             ))
+        },
+        getResultsAfirmaciones(page=1) {   
+            if(this.showdeletes_burga_afirmacion == false) {
+                axios.get('/burga-afirmacion/lista?page=' + page)
+                .then(response => {
+                    this.burga_afirmaciones = response.data
+                    this.total_burga_afirmaciones = this.burga_afirmaciones.total
+                }); 
+            }
+            else {
+                axios.get('/burga-afirmacion/mostrarEliminados?page=' + page)
+                .then(response => {
+                    this.burga_afirmaciones = response.data
+                    this.total_burga_afirmaciones = this.burga_afirmaciones.total
+                });
+            }
+        },
+        changePageAfirmaciones(page) {
+            this.burga_afirmaciones.current_page = page
+            this.getResultsAfirmaciones(page)
+        },
+        nuevaAfirmacion()
+        {
+            this.limpiar('burga-afirmacion')
+            $('#afirmacion-create').modal('show')
+        },
+        guardarAfirmacion() {
+            axios.post('/burga-afirmacion/guardar',this.burga_afirmacion)
+                .then((response) => (
+                    swal.fire({
+                        type : 'success',
+                        title : 'Burga Afirmaciones',
+                        text : response.data.mensaje,
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor:"#1abc9c",
+                    }).then(respuesta => {
+                        if(respuesta.value) {
+                            $('#afirmacion-create').modal('hide'),
+                            this.listarAfirmaciones(),
+                            this.getResultsAfirmaciones()
+                        }
+                    })
+                ))
+                .catch((errors) => {
+                    if(response = errors.response) {
+                        this.errores = response.data.errors,
+                        console.clear()
+                    }
+                })
+        },
+        mostrarAfirmacion(id) {
+            this.limpiar('burga-afirmacion')
+            axios.get('/burga-afirmacion/mostrar',{params:{id:id}})
+            .then((response) => {
+                let men = response.data
+                this.burga_afirmacion.id =  men.id
+                this.burga_afirmacion.nombre = men.nombre
+                $('#afirmacion-show').modal('show')
+            })
+        },
+        editarAfirmacion(id) {
+            this.limpiar('burga-afirmacion')
+            axios.get('/burga-afirmacion/mostrar',{params:{id:id}})
+            .then((response) => {
+                let men = response.data
+                this.burga_afirmacion.id =  men.id
+                this.burga_afirmacion.nombre = men.nombre
+                $('#afirmacion-edit').modal('show')
+            })
+        },
+        actualizarAfirmacion() {
+            axios.put('/burga-afirmacion/actualizar',this.burga_afirmacion)
+                .then((response) => (
+                    swal.fire({
+                        type : 'success',
+                        title : 'Afirmación',
+                        text : response.data.mensaje,
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor:"#1abc9c",
+                    }).then(respuesta => {
+                        if(respuesta.value) {
+                            this.listarAfirmaciones(),
+                            this.getResultsAfirmaciones()
+                            $('#afirmacion-edit').modal('hide')
+                        }
+                    })
+                ))
+                .catch((errors) => {
+                    if(response = errors.response) {
+                        this.errores = response.data.errors
+                        //console.clear()
+                    }
+                })
+        },
+        eliminarAfirmacion(id) {
+            swal.fire({
+                title:"¿Está Seguro de Eliminar?",
+                text:'No podrás revertirlo',
+                type:"question",
+                showCancelButton: true,
+                confirmButtonText:"Si",
+                confirmButtonColor:"#38c172",
+                cancelButtonText:"No",
+                cancelButtonColor:"#e3342f"
+            }).then( response => {
+                if(response.value){
+                    axios.post('/burga-afirmacion/eliminar',{id:id})
+                    .then((response) => (
+                        swal.fire({
+                            type : 'success',
+                            title : 'Afirmación',
+                            text : response.data.mensaje,
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor:"#1abc9c",
+                        }).then(respuesta => {
+                            if(respuesta.value) {
+                                this.listarAfirmaciones(),
+                                this.getResultsAfirmaciones()
+                            }
+                        })
+                    ))
+                    .catch((errors) => {
+                        if(response = errors.response) {
+                            this.errores = response.data.errors
+                        }
+                    })
+                }
+            }).catch(error => {
+                this.$Progress.fail()
+                swal.showValidationError(
+                    `Ocurrió un Error: ${error.response.status}`
+                )
+            })
+        },
+        mostrarEliminadosAfirmacion() {
+            this.showdeletes_burga_afirmacion = true
+            axios.get('/burga-afirmacion/mostrarEliminados').then(({ data }) => (
+                this.burga_afirmaciones = data,
+                this.total_burga_afirmaciones = this.burga_afirmaciones.total
+            ))
+            this.getResultsAfirmaciones()
+        },
+        mostrarActivosAfirmacion() {
+            this.showdeletes_burga_afirmacion=false;
+            this.listarAfirmaciones()
+            this.getResultsAfirmaciones()
+        },
+        restaurarAfirmacion(id) {
+            swal.fire({
+                title:"¿Está Seguro de Restaurar el Registro?",
+                text:'Puede Eliminarlo Cuando desee',
+                type:"question",
+                showCancelButton: true,
+                confirmButtonText:"Si",
+                confirmButtonColor:"#38c172",
+                cancelButtonText:"No",
+                cancelButtonColor:"#e3342f"
+            }).then( response => {
+                if(response.value){
+                    axios.post('/burga-afirmacion/restaurar',{id:id})
+                    .then((response) => (
+                        swal.fire({
+                            type : 'success',
+                            title : 'Afirmacipón',
+                            text : response.data.mensaje,
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor:"#1abc9c",
+                        }).then(respuesta => {
+                            if(respuesta.value) {
+                                this.showdeletes_burga_afirmacion = false;
+                                this.listarAfirmaciones(),
+                                this.getResultsAfirmaciones()
+                            }
+                        })
+                    ))
+                    .catch((errors) => {
+                        if(response = errors.response) {
+                            this.errores = response.data.errors
+                        }
+                    })
+                }
+            }).catch(error => {
+                this.$Progress.fail()
+                swal.showValidationError(
+                    `Ocurrió un Error: ${error.response.status}`
+                )
+            })
+        },
     },
     created() {
         this.listarAlternativas()
         this.getResultsAlternativas()
+        this.listarAfirmaciones()
+        this.getResultsAfirmaciones()
     }
 })

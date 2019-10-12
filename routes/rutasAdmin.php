@@ -143,3 +143,16 @@ Route::group(['prefix' => 'burga-alternativa', 'middleware' => 'auth'], function
     Route::post('restaurar','BurgaAlternativaController@restoredelete')->name('burga-alternativa.restoredelete');
     Route::get('filtro','BurgaAlternativaController@filtro')->name('burga-alternativa.filtro');
 });
+
+Route::group(['prefix' => 'burga-afirmacion', 'middleware' => 'auth'], function(){
+    Route::get('/', 'BurgaAfirmacionController@index')->name('burga-afirmacion.index');
+    Route::get('lista', 'BurgaAfirmacionController@lista')->name('burga-afirmacion.lista');
+    Route::post('guardar','BurgaAfirmacionController@store')->name('burga-afirmacion.store');
+    Route::get('mostrar', 'BurgaAfirmacionController@show')->name('burga-afirmacion.show');
+    Route::put('actualizar','BurgaAfirmacionController@update')->name('burga-afirmacion.update');
+    Route::post('eliminar','BurgaAfirmacionController@destroy')->name('burga-afirmacion.destroy');
+    Route::get('mostrarEliminados', 'BurgaAfirmacionController@showdeletes')->name('burga-afirmacion.showdeletes');
+    Route::get('mostrarActivos','BurgaAfirmacionController@showactives')->name('burga-afirmacion.showactives');
+    Route::post('restaurar','BurgaAfirmacionController@restoredelete')->name('burga-afirmacion.restoredelete');
+    Route::get('filtro','BurgaAfirmacionController@filtro')->name('burga-afirmacion.filtro');
+});
