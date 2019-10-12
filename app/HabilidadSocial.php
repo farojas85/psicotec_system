@@ -11,4 +11,10 @@ class HabilidadSocial extends Model
 
     protected $fillable = ['id','nombre','descripcion','estado','deleted_at'];
 
+    public function burga_afirmacions()
+    {
+        return $this->belongsToMany(BurgaAfirmacion::class)->withTimestamps()
+                    ->select('id','nombre');
+    }
+
 }

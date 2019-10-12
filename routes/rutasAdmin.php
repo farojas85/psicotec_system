@@ -120,15 +120,7 @@ Route::group(['prefix' => 'ocupacion', 'middleware' => 'auth'], function(){
 
 Route::group(['prefix' => 'test-burga', 'middleware' => 'auth'], function(){
     Route::get('/', 'BurgaController@index')->name('burga.index');
-    // Route::get('lista', 'OcupacionController@lista')->name('ocupacion.lista');
-    // Route::post('guardar','OcupacionController@store')->name('ocupacion.store');
-    // Route::get('mostrar', 'OcupacionController@show')->name('ocupacion.show');
-    // Route::put('actualizar','OcupacionController@update')->name('ocupacion.update');
-    // Route::post('eliminar','OcupacionController@destroy')->name('ocupacion.destroy');
-    // Route::get('mostrarEliminados', 'OcupacionController@showdeletes')->name('ocupacion.showdeletes');
-    // Route::get('mostrarActivos','OcupacionController@showactives')->name('ocupacion.showactives');
-    // Route::post('restaurar','OcupacionController@restoredelete')->name('ocupacion.restoredelete');
-    // Route::get('filtro','OcupacionController@filtro')->name('ocupacion.filtro');
+    Route::get('afirmacion-habilidad','BurgaController@afirmacion_habilidad')->name('burga.afirmacion-habilidad');
 });
 
 Route::group(['prefix' => 'burga-alternativa', 'middleware' => 'auth'], function(){

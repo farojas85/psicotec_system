@@ -15,6 +15,12 @@ class CreateBurgaAfirmacionHabilidadSocialTable extends Migration
     {
         Schema::create('burga_afirmacion_habilidad_social', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('burga_afirmacion_id')->unsigned()->index();
+            $table->foreign('burga_afirmacion_id')->references('id')->on('burga_afirmacions')
+                    ->onDelete('cascade')->onUpdate('cascade');
+            $table->bigInteger('habilidad_social_id')->unsigned()->index();
+            $table->foreign('habilidad_social_id')->references('id')->on('habilidad_socials')
+                    ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
     }

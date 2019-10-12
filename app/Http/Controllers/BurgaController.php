@@ -14,4 +14,9 @@ class BurgaController extends Controller
     {
         return View('Configuraciones.test_burga.index');
     }
+
+    public function afirmacion_habilidad() 
+    {
+        return View('Configuraciones.test_burga.afirmacion_habilidad.index');
+    }
 }

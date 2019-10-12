@@ -37,6 +37,14 @@
                                 </a>
                             </li>
                         @endcan
+                        @can('burga.afirmacion-habilidad')
+                            <li class="nav-item">
+                                <a href="#afirmacion-habilidad" data-toggle="tab" 
+                                    aria-expanded="false" class="nav-link">
+                                    Afirmaciones por Habilidad Social
+                                </a>
+                            </li>
+                        @endcan
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="burga-alternativas">
@@ -44,6 +52,9 @@
                         </div>
                         <div class="tab-pane" id="burga-afirmaciones">
                             @include('Configuraciones.test_burga.afirmacion.index')
+                        </div>
+                        <div class="tab-pane" id="afirmacion-habilidad">
+                            @include('Configuraciones.test_burga.afirmacion_habilidad.index')
                         </div>
                     </div>
                 </div>
