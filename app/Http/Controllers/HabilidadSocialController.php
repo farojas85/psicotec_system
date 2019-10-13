@@ -89,4 +89,9 @@ class HabilidadSocialController extends Controller
 
         return response()->json(['mensaje' => 'Registro Restaurado Satisfactoriamente']);
     }
+
+    public function filtro()
+    {
+        return HabilidadSocial::where('estado',1)->select('id','nombre')->get();
+    }
 }

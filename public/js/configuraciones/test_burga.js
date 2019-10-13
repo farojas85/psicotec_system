@@ -17,6 +17,15 @@ var app = new Vue({
         burga_afirmaciones:[],
         total_burga_afirmaciones:'',
         showdeletes_burga_afirmacion:false,
+        habilidad_socials:[],
+        total_habilidad:'',
+        afirmaciones:[],
+        total_afirmacion:'',
+        afirmacion_habilidad:{
+            habilidad_social_id:'',
+            nombre_habilidad:'',
+            burga_afirmacion_id:[]
+        }
     },
     computed:{
         isActivedBurgaAlt() {
@@ -463,11 +472,68 @@ var app = new Vue({
                 )
             })
         },
+        filtarHabilidades() {
+            axios.get('/habilidad-social/filtro').then(({ data }) => (
+                this.habilidad_socials = data,
+                this.total_habilidad = this.habilidad_socials.length
+            ))
+        },
+        filtarAfirmaciones() {
+            axios.get('/burga-afirmacion/filtro').then(({ data }) => (
+                this.afirmaciones = data,
+                this.total_afirmacion = this.afirmaciones.length
+            ))
+        },
+        listarAfirmacionesHabilidad(id) {
+            this.afirmacion_habilidad.habilidad_social_id = id
+            axios.get('/burga-afirmacion/listarAfirmacionesHabilidad',{params: {id: id}})
+                .then((response ) => {
+                    var afirmaciones = response.data
+                    this.afirmacion_habilidad.burga_afirmacion_id = []
+                    this.afirmacion_habilidad.nombre_habilidad = afirmaciones[0].nombre
+                    if(afirmaciones.length >0 )
+                    {                        
+                        if(afirmaciones[0].burga_afirmacions.length > 0)
+                        {
+                            for(let i=0; i<afirmaciones[0].burga_afirmacions.length; i++)
+                            {
+                                this.afirmacion_habilidad.burga_afirmacion_id.push(afirmaciones[0].burga_afirmacions[i].id)
+                            }
+                        }
+                    }
+                })
+        },
+        guardar()
+        {
+            axios.post('/burga-afirmacion/guardarAfirmaciones',this.afirmacion_habilidad)
+                .then((response) => (
+                    swal.fire({
+                        type : 'success',
+                        title : 'Afirmaciones / Habilidad Social',
+                        text : response.data.mensaje,
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor:"#1abc9c",
+                    }).then(respuesta => {
+                        if(respuesta.value) {
+                            this.listarAfirmacionesHabilidad(this.afirmacion_habilidad.habilidad_social_id)
+                        }
+                    })
+                ))
+                .catch((errors) => {
+                    if(response = errors.response) {
+                        this.errores = response.data.errors,
+                        console.clear()
+                    }
+                })
+        }
     },
     created() {
         this.listarAlternativas()
         this.getResultsAlternativas()
         this.listarAfirmaciones()
         this.getResultsAfirmaciones()
+        this.filtarHabilidades()
+        this.filtarAfirmaciones()
+        this.listarAfirmacionesHabilidad(1)
     }
 })

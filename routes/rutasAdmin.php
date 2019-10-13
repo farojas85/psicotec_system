@@ -68,6 +68,7 @@ Route::group(['prefix' => 'habilidad-social', 'middleware' => 'auth'], function(
     Route::post('eliminar','HabilidadSocialController@destroy')->name('habilidadsocial.destroy');
     Route::get('mostrarEliminados', 'HabilidadSocialController@showdeletes')->name('habilidadsocial.showdeletes');
     Route::post('restaurar','HabilidadSocialController@restoredelete')->name('habilidadsocial.restoredelete');
+    Route::get('filtro','HabilidadSocialController@filtro')->name('habilidadsocial.filtro');
 });
 
 Route::group(['prefix' => 'estilo-aprendizaje', 'middleware' => 'auth'], function(){
@@ -147,4 +148,11 @@ Route::group(['prefix' => 'burga-afirmacion', 'middleware' => 'auth'], function(
     Route::get('mostrarActivos','BurgaAfirmacionController@showactives')->name('burga-afirmacion.showactives');
     Route::post('restaurar','BurgaAfirmacionController@restoredelete')->name('burga-afirmacion.restoredelete');
     Route::get('filtro','BurgaAfirmacionController@filtro')->name('burga-afirmacion.filtro');
+    Route::get('listarAfirmacionesHabilidad','BurgaAfirmacionController@listarAfirmacionesHabilidad')
+           ->name('burga-afirmacion.listarAfirmacionesHabilidad');
+    Route::post('guardarAfirmaciones','BurgaAfirmacionController@guardar_afirmacion');
+});
+
+Route::group(['prefix' => 'colegio', 'middleware' => 'auth'], function(){
+    Route::get('/', 'ColegioController@index')->name('colegio.index');
 });

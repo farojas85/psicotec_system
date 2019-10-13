@@ -8,6 +8,11 @@
                 <div class="card-body">
                     <div class="nav flex-column nav-pills nav-pills-tab" id="v-pills-tab" role="tablist" 
                             aria-orientation="vertical">
+                        <a class="nav-link mb-2" v-if="total_habilidad>0" v-for="hab in habilidad_socials" :key="hab.id" 
+                            :class="{'show active' : hab.id == 1 }"
+                            href="#" data-toggle="pill" @click="listarAfirmacionesHabilidad(hab.id)">
+                            @{{hab.nombre}}
+                        </a>
                     </div>
                 </div>
             </div>

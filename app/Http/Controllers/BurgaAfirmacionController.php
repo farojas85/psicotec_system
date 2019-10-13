@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BurgaAfirmacion;
+use App\HabilidadSocial;
 use Illuminate\Http\Request;
 
 class BurgaAfirmacionController extends Controller
@@ -87,6 +88,19 @@ class BurgaAfirmacionController extends Controller
     }
 
     public function filtro() {
-        return BurgaAfirmacion::where('estado',1)->select('id','nombre')->orderBy('id','ASC')->get();
+        return BurgaAfirmacion::select('id','nombre')->orderBy('id','ASC')->get();
+    }
+
+    public function listarAfirmacionesHabilidad(Request $request)  {
+        return HabilidadSocial::with('burga_afirmacions')
+                                ->where('habilidad_socials.id',$request->id)->get();
+    }
+
+    public function guardar_afirmacion(Request $request)
+    {
+        $habilidad = HabilidadSocial::findOrFail($request->habilidad_social_id);
+        $habilidad->burga_afirmacions()->sync($request->burga_afirmacion_id);
+
+        return response()->json(['mensaje' => 'Las Afirmaciones han sido asignadas a la habilidad Social Seleccionada']);
     }
 }

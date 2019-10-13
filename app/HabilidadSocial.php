@@ -13,8 +13,7 @@ class HabilidadSocial extends Model
 
     public function burga_afirmacions()
     {
-        return $this->belongsToMany(BurgaAfirmacion::class)->withTimestamps()
-                    ->select('id','nombre');
+        return $this->belongsToMany(BurgaAfirmacion::class)->withTimestamps();
     }
 
 }
