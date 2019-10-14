@@ -34,4 +34,10 @@ return [
         'secret' => env('SPARKPOST_SECRET'),
     ],
 
+    'facebook' => [
+        'client_id' => '803682636713194',
+        'client_secret' => '66071efef77b3048c431b49293d7a6cd',
+        'redirect' => 'https://psiscotec-system.herokuapp.com',
+      ], 
+
 ];

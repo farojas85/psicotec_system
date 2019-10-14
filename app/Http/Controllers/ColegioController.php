@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Colegio;
 use Illuminate\Http\Request;
+use App\Imports\ColegiosImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ColegioController extends Controller
 {
@@ -12,35 +14,15 @@ class ColegioController extends Controller
         return view('Configuraciones.Colegio.index');
     }
 
-    public function create()
+    public function lista()
     {
-        //
+        return Colegio::paginate(10);
     }
 
-    public function store(Request $request)
+    public function subir(Request $request)
     {
-        //
+       Excel::import(new ColegiosImport,$request->file);
+       return response()->json(['mensaje' => 'Colegios importados al Sistema, Satisfactoriamente']);
     }
-
-    public function show(Colegio $colegio)
-    {
-        //
-    }
-
-    public function edit(Colegio $colegio)
-    {
-        //
-    }
-
-
-    public function update(Request $request, Colegio $colegio)
-    {
-        //
-    }
-
-
-    public function destroy(Colegio $colegio)
-    {
-        //
-    }
+    
 }

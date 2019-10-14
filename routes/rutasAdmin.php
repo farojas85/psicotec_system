@@ -155,4 +155,9 @@ Route::group(['prefix' => 'burga-afirmacion', 'middleware' => 'auth'], function(
 
 Route::group(['prefix' => 'colegio', 'middleware' => 'auth'], function(){
     Route::get('/', 'ColegioController@index')->name('colegio.index');
+    Route::get('lista', 'ColegioController@lista')->name('colegio.lista');
+    Route::post('subir', 'ColegioController@subir')->name('colegio.subir');
+    Route::get('exportar', 'ColegioController@exportar')->name('colegio.exportar');
+    Route::get('importarExportarVista', 'ColegioController@importarExportarVista');
+    Route::post('importar', 'ColegioController@importar')->name('colegio.importar');
 });
