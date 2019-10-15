@@ -26,8 +26,8 @@ class AlterColumnNameToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->dropUnique('name');
             $table->dropUnique('users_name_unique');
-            $table->string('name')->change();
         });
     }
 }
