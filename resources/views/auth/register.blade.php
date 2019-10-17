@@ -1,7 +1,7 @@
 @extends('layouts.lalogin')
 
 @section('content')
-<div class="account-pages mt-2 mb-5">
+<div class="account-pages mt-2 mb-5" id="contenido">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-8 col-xl-6">
@@ -35,7 +35,7 @@
                                                         <li class="nav-item">
                                                             <a href="#finish-2" data-toggle="tab" class="nav-link rounded-0 pt-2 pb-2">
                                                                 <i class="mdi mdi-checkbox-marked-circle-outline mr-1"></i>
-                                                                <span class="d-none d-sm-inline">Finalizar</span>
+                                                                <span class="d-none d-sm-inline">Datos Colegio</span>
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -96,49 +96,98 @@
                                                         <div class="tab-pane" id="profile-tab-2">
                                                             <div class="row">
                                                                 <div class="col-12">
-                                                                    <div class="form-group row mb-3">
-                                                                        <label class="col-md-3 col-form-label" for="name1"> First name</label>
+                                                                    <div class="form-group row">
+                                                                        <label for="dni" class="col-md-3 col-form-label text-md-right">D.N.I.</label>                                            
                                                                         <div class="col-md-9">
-                                                                            <input type="text" id="name1" name="name1" class="form-control" value="Francis">
+                                                                            <input id="dni" type="text" class="form-control 
+                                                                                    @error('dni') is-invalid @enderror" name="dni" 
+                                                                                    value="{{ old('dni') }}" required 
+                                                                                    @change="buscarDni"
+                                                                                placeholder="Nro. Documento Identidad">                                            
+                                                                            @error('dni')
+                                                                                <span class="invalid-feedback" role="alert">
+                                                                                    <strong>{{ $message }}</strong>
+                                                                                </span>
+                                                                            @enderror
                                                                         </div>
                                                                     </div>
-                                                                    <div class="form-group row mb-3">
-                                                                        <label class="col-md-3 col-form-label" for="surname1"> Last name</label>
+                                                                    <div class="form-group row">
+                                                                        <label for="apellido_parterno" class="col-md-3 col-form-label text-md-right">Ape. Paterno</label>                                            
                                                                         <div class="col-md-9">
-                                                                            <input type="text" id="surname1" name="surname1" class="form-control" value="Brinkman">
+                                                                        <input id="apellido_paterno" name="apellido_paterno" type="text" 
+                                                                            class="form-control @error('apellido_paterno') is-invalid @enderror"                                                                                   
+                                                                            required v-model="alumno.apellido_paterno"
+                                                                            placeholder="Apellido paterno">                                            
+                                                                        @error('apellido_paterno')
+                                                                            <span class="invalid-feedback" role="alert">
+                                                                                <strong>{{ $message }}</strong>
+                                                                            </span>
+                                                                        @enderror
                                                                         </div>
                                                                     </div>
-                                            
-                                                                    <div class="form-group row mb-3">
-                                                                        <label class="col-md-3 col-form-label" for="email1">Email</label>
+                                                                    <div class="form-group row">
+                                                                        <label for="apellido_materno" class="col-md-3 col-form-label text-md-right">Ape. Materno</label>                                            
                                                                         <div class="col-md-9">
-                                                                            <input type="email" id="email1" name="email1" class="form-control" value="cory1979@hotmail.com">
+                                                                        <input id="apellido_materno" name="apellido_materno" type="text" 
+                                                                            class="form-control @error('apellido_materno') is-invalid @enderror"                                                                                   
+                                                                            required v-model="alumno.apellido_materno"
+                                                                            placeholder="Apellido paterno">                                            
+                                                                        @error('apellido_materno')
+                                                                            <span class="invalid-feedback" role="alert">
+                                                                                <strong>{{ $message }}</strong>
+                                                                            </span>
+                                                                        @enderror
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="nombres" class="col-md-3 col-form-label text-md-right">Nombres</label>                                            
+                                                                        <div class="col-md-9">
+                                                                        <input id="nombres" name="nombres" type="text" 
+                                                                            class="form-control @error('nombres') is-invalid @enderror"                                                                                   
+                                                                            required v-model="alumno.nombres"
+                                                                            placeholder="Apellido paterno">                                            
+                                                                        @error('nombres')
+                                                                            <span class="invalid-feedback" role="alert">
+                                                                                <strong>{{ $message }}</strong>
+                                                                            </span>
+                                                                        @enderror
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="sexo" class="col-md-3 col-form-label text-md-right">sexo</label>                                            
+                                                                        <div class="col-md-9">
+                                                                            <select id="sexo" name="sexo" class="form-control" required>
+                                                                                <option value="">-SELECCIONE-</option>
+                                                                                <option value="Masculino">Masculino</option>
+                                                                                <option value="Femenino">Femenino</option>
+                                                                            </select>                                           
+                                                                            @error('sexo')
+                                                                                <span class="invalid-feedback" role="alert">
+                                                                                    <strong>{{ $message }}</strong>
+                                                                                </span>
+                                                                            @enderror
                                                                         </div>
                                                                     </div>
                                                                 </div> <!-- end col -->
                                                             </div> <!-- end row -->
                                                         </div>    
                                                         <div class="tab-pane" id="finish-2">
-                                                            <div class="row">
-                                                                <div class="col-12">
-                                                                    <div class="text-center">
-                                                                        <h2 class="mt-0"><i class="mdi mdi-check-all"></i></h2>
-                                                                        <h3 class="mt-0">Thank you !</h3>
-    
-                                                                        <p class="w-75 mb-2 mx-auto">Quisque nec turpis at urna dictum luctus. Suspendisse convallis dignissim eros at volutpat. In egestas mattis dui. Aliquam
-                                                                            mattis dictum aliquet.</p>
-    
-                                                                        <div class="mb-3">
-                                                                            <div class="custom-control custom-checkbox">
-                                                                                <input type="checkbox" class="custom-control-input" id="customCheck3">
-                                                                                <label class="custom-control-label" for="customCheck3">I agree with the Terms and Conditions</label>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div> <!-- end col -->
-                                                            </div> <!-- end row -->
-                                                        </div>
-    
+                                                            <div class="form-group row">
+                                                                <label for="departamento" class="col-md-3 col-form-label text-md-right">Departamento</label>                                            
+                                                                <div class="col-md-9">
+                                                                    <select id="departamento" name="departamento" class="form-control" required>
+                                                                        <option value="">-SELECCIONE-</option>
+                                                                        <option value="Masculino">Masculino</option>
+                                                                        <option value="Femenino">Femenino</option>
+                                                                    </select>                                           
+                                                                    @error('departamento')
+                                                                        <span class="invalid-feedback" role="alert">
+                                                                            <strong>{{ $message }}</strong>
+                                                                        </span>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div>    
                                                         <ul class="list-inline mb-0 wizard">
                                                             <li class="previous list-inline-item float-left">
                                                                 <a href="javascript: void(0);" class="btn btn-secondary">Anterior</a>
@@ -146,8 +195,7 @@
                                                             <li class="next list-inline-item float-right">
                                                                 <a href="javascript: void(0);" class="btn btn-secondary">Siguiente</a>
                                                             </li>
-                                                        </ul>
-    
+                                                        </ul>    
                                                     </div> <!-- tab-content -->
                                                 </div>
                                             </form>
@@ -235,4 +283,7 @@
         </div>
     </div>
 </div>-->
+@endsection
+@section('scripties')
+    <script src="js/configuraciones/registro.js"></script>
 @endsection

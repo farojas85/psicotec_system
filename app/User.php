@@ -28,4 +28,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class)->withTimestamps();
     }
+
+    public function persona()
+    {
+        return $this->hasOne(Persona::class);
+    }
 }

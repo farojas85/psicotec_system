@@ -161,3 +161,4 @@ Route::group(['prefix' => 'colegio', 'middleware' => 'auth'], function(){
     Route::get('importarExportarVista', 'ColegioController@importarExportarVista');
     Route::post('importar', 'ColegioController@importar')->name('colegio.importar');
 });
+

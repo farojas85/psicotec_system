@@ -7,14 +7,14 @@ class SeccionsTableSeeder extends Seeder
 {
     public function run()
     {
-        Seccion::create(['nombre' => 'A']);
-        Seccion::create(['nombre' => 'B']);
-        Seccion::create(['nombre' => 'C']);
-        Seccion::create(['nombre' => 'D']);
-        Seccion::create(['nombre' => 'E']);
-        Seccion::create(['nombre' => 'F']);
-        Seccion::create(['nombre' => 'G']);
-        Seccion::create(['nombre' => 'H']);
-        Seccion::create(['nombre' => 'I']);
+        Seccion::firstOrCreate(['nombre' => 'A']);
+        Seccion::firstOrCreate(['nombre' => 'B']);
+        Seccion::firstOrCreate(['nombre' => 'C']);
+        Seccion::firstOrCreate(['nombre' => 'D']);
+        Seccion::firstOrCreate(['nombre' => 'E']);
+        Seccion::firstOrCreate(['nombre' => 'F']);
+        Seccion::firstOrCreate(['nombre' => 'G']);
+        Seccion::firstOrCreate(['nombre' => 'H']);
+        Seccion::firstOrCreate(['nombre' => 'I']);
     }
 }

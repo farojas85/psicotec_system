@@ -30,7 +30,12 @@
         <!-- Plugins js-->
         <script src="assets/libs/twitter-bootstrap-wizard/twitter-bootstrap-wizard.min.js"></script>
 
+        <!-- VUE -->
+        <script src="js/vue.js"></script>
+        <script src="js/axios.min.js"></script>
+
         <!-- Init js-->
         <script src="assets/js/pages/form-wizard.init.js"></script>
+        @yield('scripties')
     </body>
 </html>

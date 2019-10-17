@@ -12,11 +12,11 @@ class GradosTableSeeder extends Seeder
      */
     public function run()
     {
-        Grado::create(['nombre' => '1°']);
-        Grado::create(['nombre' => '2°']);
-        Grado::create(['nombre' => '3°']);
-        Grado::create(['nombre' => '4°']);
-        Grado::create(['nombre' => '5°']);
+        Grado::firstOrCreate(['nombre' => '1°']);
+        Grado::firstOrCreate(['nombre' => '2°']);
+        Grado::firstOrCreate(['nombre' => '3°']);
+        Grado::firstOrCreate(['nombre' => '4°']);
+        Grado::firstOrCreate(['nombre' => '5°']);
     }
 }
 

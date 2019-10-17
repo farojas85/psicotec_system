@@ -20,3 +20,5 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 //ruta para los docentes
 require __DIR__.'/rutasAdmin.php';
+
+require __DIR__.'/rutasUsuario.php';
